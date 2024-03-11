@@ -53,3 +53,58 @@ plot(frequencies, magnitude_spectrum);
 % How do the wavelet-convolved ERPs compare with the broadband ERP?
 
 
+%% Averaging the result(s) of convolution over all trials and  and plotting  an ERP corresponding to each wavelet frequency.
+
+% 
+% for j = 1:5
+%     for l = 1:size(eeg_data_all_trials,1)
+%          same_freq_store{j}(l,:) = convol_result{l}(1,:);
+%     end
+% 
+%     mean_result = mean(same_freq_store{j},1);
+%     figure;
+%     plot(real(mean_result));
+%     disp(mean_result);
+% 
+% end
+convol_results = cell(1, length(frequency_range));
+
+% Convolve each frequency's data
+for i = 1:length(frequency_range)
+    convol_result = zeros(size(eegdata_trial));
+    for l = 1:size(eegdata_trial, 1)
+        convol_result(l, :) = real(conv(eegdata_trial(l, :), wavelet_family(wavelet_number,:), 'same'));
+    end
+    disp(convol_result);
+    convol_results{i} = convol_result;
+end
+
+
+
+% Compute the broadband ERP (without convolution)
+broadband_ERP = mean(eegdata_trial, 1);
+
+% Plotting
+figure;
+plot(broadband_ERP)
+
+
+mean_results = cell(1, length(frequency_range));
+% Plot each frequency's ERP in its own subplot
+for i = 1:length(frequency_range)
+    subplot(length(frequency_range)+1, 1, i);
+    mean_result = mean(convol_results{i}, 1);
+    mean_results{i} = mean_result;
+    plot(mean_result);
+    title(['ERP for frequency: ' num2str(frequency_range(i)) ' Hz']);
+    xlabel('Time');
+    ylabel('Amplitude');
+end
+
+% Plotting the broadband ERP
+subplot(length(frequency_range)+1, 1, length(frequency_range)+1);
+plot(broadband_ERP);
+title('Broadband ERP (without convolution)');
+xlabel('Time');
+ylabel('Amplitude');
+
