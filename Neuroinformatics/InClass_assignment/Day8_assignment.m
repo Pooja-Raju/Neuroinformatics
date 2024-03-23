@@ -31,4 +31,10 @@ hold off
 
 % Question 2, Convolve each wavelet with the electrode data that you used in the last class for any one trial.
 
+all_eegdata = squeeze(EEG.data(:,:,1));
+
+for i = 1:length(frequency)
+    
+    
+end
 
